@@ -45,10 +45,35 @@ COMMANDS:
 GLOBAL OPTIONS:
    --help, -h  show help
 ```
-
+### Criando segredos
 - Criando um novo segredo
-	`$ secrets new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b`
+```bash
+$ secret new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
+```
 - Criando um novo segredo referenciando um arquivo
-	`$ secrets new --name azure-devops-token --file some_file.pem`
+``` bash 
+$ secret new --name azure-devops-token --file some_file.pem
+```
 - Criando um novo segredo referenciando um arquivo e um segredo
-	`$ secrets new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b --file some_file.pem` 
+```bash
+$ secret new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b --file some_file.pem
+```
+### Buscando segredos
+- Buscando um segredo e ocultando os valores sensíveis
+```bash
+$ secret get --name azure_devops_token
+name               createAt            updateAt
+azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10
+```
+- Buscando um segredo e retornando o valor sensível
+```bash
+$ secret get --spy --name azure_devops_token
+name               createAt            updateAt            value
+azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
+```
+- Buscando um segredo e retornando o valor sensível e exportando o arquivo
+```bash
+$ secret get --spy --name azure_devops_token --path "dir/path/target"
+name               createAt            updateAt            value
+azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
+```
