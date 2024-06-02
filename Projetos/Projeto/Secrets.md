@@ -28,6 +28,27 @@ A senha não é obrigatória! Ela é apenas uma camada extra de segurança.
 ### MFA para substituir a senha
 Para manter o mínimo de segurança para os usuários que não querem configurar uma senha, o MFA pode ser utilizado sozinho. Toda vez que a flag `--spy` for utilizada, se o MFA estiver configurado, será solicitado o código de acesso.
 ### Utilizando o MFA e a senha de acesso
-É possível realizar a configuração dos dois tipos de autenticação. Primeiro será solicitado a senha e em seguida o MFA.
-
+É possível realizar a configuração dos dois tipos de autenticação. Primeiro será `solicitado` a senha e em seguida o MFA.
 ## Usagem
+```
+NAME:
+   secret - Guarde e manipule senhas e segredos
+
+USAGE:
+   Guarde e manitupe segredos no geral: senhas, ssh keys, tokens e etc
+
+COMMANDS:
+   new, n   Novo segredo
+   get, g   Recupera um segredo
+   list, l  Lista todos os segredos disponíveis, ocultando os valores
+
+GLOBAL OPTIONS:
+   --help, -h  show help
+```
+
+- Criando um novo segredo
+	`$ secrets new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b`
+- Criando um novo segredo referenciando um arquivo
+	`$ secrets new --name azure-devops-token --file some_file.pem`
+- Criando um novo segredo referenciando um arquivo e um segredo
+	`$ secrets new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b --file some_file.pem` 

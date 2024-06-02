@@ -1,4 +1,6 @@
 {
   "promptDelete": false,
-  "showInlineTitle": true
+  "showInlineTitle": false,
+  "readableLineLength": true,
+  "strictLineBreaks": false
 }
