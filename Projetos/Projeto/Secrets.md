@@ -74,6 +74,10 @@ $ secret new --name azure-devops-token --file some_file.pem
 ```bash
 $ secret new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b --file some_file.pem
 ```
+- Criando um novo segredo com todas as informações possíveis
+```bash
+$ secret new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b --file some_file.pem --email "email@gmail.com" --url "github.com"
+```
 ### Buscando segredo
 ```bash
 secret help get
@@ -87,24 +91,31 @@ OPTIONS:
    --name value, -n value  nome único para rotular o segredo
    --spy, -s               se informado, retornará as informações ocultas do segredo (default: false)
    --path value, -p value  se informado, irá criar o contúdo do segredo no caminho especificado
+   --omit value, -o value [ --omit value, -o value ]  omitir colunas
    --help, -h              show help
 ```
 
 - Buscando um segredo e ocultando os valores sensíveis
 ```bash
-$ secret get --name azure_devops_token
+$ secret get --name azure_devops_token --omit email,url
 name               createAt            updateAt
 azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10
 ```
 - Buscando um segredo e retornando o valor sensível
 ```bash
-$ secret get --spy --name azure_devops_token
+$ secret get --spy --name azure_devops_token --omit email,url
 name               createAt            updateAt            value
 azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
 ```
 - Buscando um segredo, retornando o valor sensível e exportando o arquivo
 ```bash
-$ secret get --spy --name azure_devops_token --path "dir/path/target"
+$ secret get --spy --name azure_devops_token --path "dir/path/target" --omit email,url
 name               createAt            updateAt            value
 azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
+```
+- Buscando um segredo sem omitir nenhuma coluna
+```bash
+$ secret get --spy --name azure_devops_token
+name               createAt            updateAt            email           url        value              
+azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10 email@gmail.com google.com 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
 ```
