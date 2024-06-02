@@ -45,7 +45,23 @@ COMMANDS:
 GLOBAL OPTIONS:
    --help, -h  show help
 ```
-### Criando segredos
+### Criando segredo
+```bash
+secret help new
+NAME:
+   secret new - Novo segredo
+
+USAGE:
+   secret new [command options]
+
+OPTIONS:
+   --name value, -n value    nome único para rotular o segredo
+   --secret value, -s value  segredo
+   --email value, -e value   email para receferencia
+   --url value, -u value     email para referencia
+   --file value, -f value    arquivo para ser armazenado
+   --help, -h                show help
+```
 - Criando um novo segredo
 ```bash
 $ secret new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
@@ -58,7 +74,22 @@ $ secret new --name azure-devops-token --file some_file.pem
 ```bash
 $ secret new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b --file some_file.pem
 ```
-### Buscando segredos
+### Buscando segredo
+```bash
+secret help get
+NAME:
+   secret get - Recupera um segredo
+
+USAGE:
+   secret get [command options]
+
+OPTIONS:
+   --name value, -n value  nome único para rotular o segredo
+   --spy, -s               se informado, retornará as informações ocultas do segredo (default: false)
+   --path value, -p value  se informado, irá criar o contúdo do segredo no caminho especificado
+   --help, -h              show help
+```
+
 - Buscando um segredo e ocultando os valores sensíveis
 ```bash
 $ secret get --name azure_devops_token
@@ -71,7 +102,7 @@ $ secret get --spy --name azure_devops_token
 name               createAt            updateAt            value
 azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
 ```
-- Buscando um segredo e retornando o valor sensível e exportando o arquivo
+- Buscando um segredo, retornando o valor sensível e exportando o arquivo
 ```bash
 $ secret get --spy --name azure_devops_token --path "dir/path/target"
 name               createAt            updateAt            value
