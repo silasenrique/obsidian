@@ -1,35 +1,6 @@
 # Overview
 O objetivo do projeto é permitir o fácil gerenciamento de senhas, segredos, arquivos de chaves ssh e etc.
-# Funcionalidades
-- É possível vincular uma fonte de dados customizada para armazenar os segredos
-- Configurar a frequência que a senha e o MFA devem ser solicitados
-- Todos os segredos serão compostos por um nome, uma senha, um arquivo chave e uma descrição
-- Os valores dos segredos só poderão ser consultados individualmente
-	- Caso a frequência de senha/MFA não for configurada, a senha será solicitada toda vez que um segredo for consultado
-- É possível listar todos os segredos
-- O arquivo da chave pode ser exportado para um diretório especificado
-# FAQ
-### Fonte de dados
-A fonte de dados deve ser provida pelo próprio usuário. Ela pode ser uma fonte de dados local ou hospedado de forma externa. É necessário apenas informar a `connection string` e o próprio `scret` configurará toda a infraestrutura necessária.
-### Porque o aplicativo não possui uma própria fonte de dados?
-Permitir utilização de fontes de dados externas, permite que o usuário compartilhe segredos com outros computadores também.  
-
-Nativamente a ferramenta utilizará o `sqlite3` de forma local.
-### Toda vez que listar os segredos, será possível ver o conteúdo deles?
-Não! A ferramenta permite sim listar todos os segredos cadastrados, mas as únicas informações que estarão disponíveis nessa lista serão as seguintes: nome do segredo, descrição, data de criação e data de alteração.
-### Como faço para ver o conteúdo do segredo?
-É necessário realizar uma consulta individual, utilizando o nome único do segredo. Ao realizar essa consulta, será necessário passar a flag `--spy`, que diz para retornar os dados ocultos também.
-
-Quando a flag `--spy` for informada, será solicitado a senha para realizar a consulta.
-### Como funciona a senha para utilizar a ferramenta?
-Na primeira vez utilizando a ferramenta, será solicitado a confirmação para sempre solicitar uma senha para ver o conteúdo oculto dos segredos. O usuário poderá negar essa etapa e nenhuma senha será solicitada.
-
-A senha não é obrigatória! Ela é apenas uma camada extra de segurança.
-### MFA para substituir a senha
-Para manter o mínimo de segurança para os usuários que não querem configurar uma senha, o MFA pode ser utilizado sozinho. Toda vez que a flag `--spy` for utilizada, se o MFA estiver configurado, será solicitado o código de acesso.
-### Utilizando o MFA e a senha de acesso
-É possível realizar a configuração dos dois tipos de autenticação. Primeiro será `solicitado` a senha e em seguida o MFA.
-## Usagem
+# Usagem
 ```
 NAME:
    secret - Guarde e manipule senhas e segredos
@@ -41,11 +12,41 @@ COMMANDS:
    new, n   Novo segredo
    get, g   Recupera um segredo
    list, l  Lista todos os segredos disponíveis, ocultando os valores
+   key, k   configure a chave de 32bit
 
 GLOBAL OPTIONS:
    --help, -h  show help
 ```
-### Criando segredo
+## Configurando a chave para ocultar os segredos
+```bash
+secret help key
+NAME:
+   secret key - configure a chave de 32bit
+
+USAGE:
+   Configure a chave de 32bit que será utilizada para realizar a criptografia e a decriptografia
+
+OPTIONS:
+   --token value, -t value  chave pessoal
+   --generate, -g           gerar chave (default: false)
+   --help, -h               show help
+```
+Para realizar o armazenamento dos segedos, será usado o algoritmo de criptografia simétrica. Esse algoritmo consiste em utilizar uma chave de 32 caracteres, para passar no momento de codificar e decodificar a informação. É uma forma segura e prática para esconder e recuperar os dados escondidos, o unico requisito é que a chave esteja salva em algum lugar.
+
+Caso a chave se perca, não será mais possível decodificar os dados escondidos.
+
+- Gerar uma chave de 32bits
+```bash
+$ secret key --generate
+chave gerada: 424f26a061636972706e2c776e6963686273696e676b6370
+```
+- Utilize uma chave própria de 32bits
+```bash
+$ secret key --token euqueroumachavesuperseguraparapp
+```
+
+A chave vai ser armazenada internamente, não sendo necessário o usuário informar o mesmo a cada manipulação dos segredos.
+## Criando segredo
 ```bash
 secret help new
 NAME:
@@ -57,6 +58,7 @@ USAGE:
 OPTIONS:
    --name value, -n value    nome único para rotular o segredo
    --secret value, -s value  segredo
+   --description value, -d value, --desc value  descrição do segredo
    --email value, -e value   email para receferencia
    --url value, -u value     email para referencia
    --file value, -f value    arquivo para ser armazenado
@@ -78,7 +80,7 @@ $ secret new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fb
 ```bash
 $ secret new --name azure-devops-token --secret 7f582271-6578-4b17-b6e4-4ec7a8fbff0b --file some_file.pem --email "email@gmail.com" --url "github.com"
 ```
-### Buscando segredo
+## Buscando segredo
 ```bash
 secret help get
 NAME:
@@ -97,25 +99,25 @@ OPTIONS:
 
 - Buscando um segredo e ocultando os valores sensíveis
 ```bash
-$ secret get --name azure_devops_token --omit email,url
+$ secret get --name azure_devops_token --omit email,url,desc
 name               createAt            updateAt
 azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10
 ```
 - Buscando um segredo e retornando o valor sensível
 ```bash
-$ secret get --spy --name azure_devops_token --omit email,url
+$ secret get --spy --name azure_devops_token --omit email,url,desc
 name               createAt            updateAt            value
 azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
 ```
 - Buscando um segredo, retornando o valor sensível e exportando o arquivo
 ```bash
-$ secret get --spy --name azure_devops_token --path "dir/path/target" --omit email,url
+$ secret get --spy --name azure_devops_token --path "dir/path/target" --omit email,url,desc
 name               createAt            updateAt            value
 azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
 ```
 - Buscando um segredo sem omitir nenhuma coluna
 ```bash
 $ secret get --spy --name azure_devops_token
-name               createAt            updateAt            email           url        value              
-azure_devops_token 20-04-2024 22:03:10 20-04-2024 22:03:10 email@gmail.com google.com 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
+name               description                                  createAt            updateAt            email           url        value              
+azure_devops_token azure devops token para consultar as tarefas 20-04-2024 22:03:10 20-04-2024 22:03:10 email@gmail.com google.com 7f582271-6578-4b17-b6e4-4ec7a8fbff0b
 ```
